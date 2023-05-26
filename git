@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+git add .
+git commit -m 'AirBnB_clone_v3'
+git push
