@@ -1,72 +1,85 @@
 #!/usr/bin/python3
-"""
-    Creating a new view for State objects that
-    handles all default RESTFul API actions:
+""" Creating a view for State objects that handles all
+default RESTFul API actions
 """
 
 
 from api.v1.views import app_views
-from models.state import State
+from flask import render_template, jsonify, request, abort
 from models import storage
-from flask import jsonify, abort, request
+from models.state import State
 
 
-@app_views.route("/states", methods=["GET", "POST"], strict_slashes=False)
-def get_and_put_states():
-    """ This function retuns and sends states from and into database """
-    if request.method == "POST":
-        # first we need to check if the request is json formated
-        if not request.get_json():
-            # we can use make_responce here but for simplicity sake we omit it
-            return jsonify({"error": "Not a JSON"}), 400
+@app_views.route("/states", strict_slashes=False)
+def states():
+    states = storage.all(State).values()
+    return jsonify([state.to_dict() for state in states])
 
-        # since the request is json formated, we parse it to python dict
-        state = request.get_json()
 
-        # here we check if the data contains the 'name' key
-        if "name" not in state.keys():
-            return jsonify({"error": "Missing name"}), 400
-
-        new_state = {"name": state["name"]}
-
-        # here send the new created state to the database and  commit
-        created_state = State(**new_state)
-        storage.new(created_state)
-        storage.save()
-
-        return jsonify(created_state.to_dict()), 201
-    else:
-        _dict = [val.to_dict() for val in storage.all(State).values()]
-        return jsonify(_dict)
+@app_views.route("/states/<state_id>", strict_slashes=False)
+def stete_by_id(state_id):
+    """retrive a state using the storage.get() method"""
+    state = storage.get(State, state_id)
+    if state:
+        return jsonify(state.to_dict())
+    abort(404)
 
 
 @app_views.route(
-    "/states/<state_id>", methods=[
-        "GET", "DELETE", "PUT"
-        ], strict_slashes=False
-)
-def state(state_id):
-    """This function returns a state"""
+        "/states/<state_id>", methods=["DELETE"], strict_slashes=False
+        )
+def delete_state(state_id):
+    """Deleting instances from database and return emty dict"""
     state = storage.get(State, state_id)
-    if state and request.method == "GET":
-        return jsonify(state.to_dict())
-
-    elif state and request.method == "DELETE":
-        state.delete()
+    if state:
+        storage.delete(state)
         storage.save()
         return jsonify({}), 200
-    elif state and request.method == "PUT":
-        # Check if the reqest is json formated
-        new_state = request.get_json()
-        if not new_state:
-            return jsonify({'error': 'Not a JSON'}), 400
-
-        for key, value in new_state.items():
-            if key not in ['id', 'created_at', 'updated_at']:
-                setattr(state, key, value)
-
-        # Save the updated state object to the database
-        storage.save()
-        return jsonify(state.to_dict())
-
     abort(404)
+
+
+@app_views.route("/states", methods=["POST"], strict_slashes=False)
+def create_state():
+    """Adding new row(instance) into database"""
+    # we first parse the json string into python object
+    state = request.get_json()
+
+    # here we check if the request is json formated
+    if not state:
+        return jsonify("Not a JSON"), 400
+
+    elif "name" not in state:
+        return jsonify("Missing name"), 400
+
+    # Creating a new row in the state table
+    new_state = State(**state)
+
+    # sending the new row into the database table
+    storage.new(new_state)
+
+    # commiting the new change to the database table
+    storage.save()
+
+    return jsonify(new_state.to_dict()), 201
+
+
+@app_views.route("/states/<state_id>", methods=["PUT"], strict_slashes=False)
+def update_state(state_id):
+    """Updating the rows of the database table"""
+    state = storage.get(State, state_id)
+    new_attrs = request.get_json()
+
+    if not state:
+        abort(404)
+
+    if not new_attrs:
+        return jsonify("Not a JSON"), 400
+
+    for key, val in new_attrs.items():
+        if key not in ["id", "created_at", "updated_at"]:
+            # setting attribute to the state instance
+            setattr(state, key, val)
+
+    storage.save()
+
+    return jsonify(state.to_dict())
