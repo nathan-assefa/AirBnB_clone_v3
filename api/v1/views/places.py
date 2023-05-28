@@ -14,15 +14,28 @@ from flask import jsonify, abort, request
 
 
 @app_views.route(
-        "/cities/<city_id>/places",
-        methods=["GET", "POST"],
-        strict_slashes=False
+        "/cities/<city_id>/places", methods=["GET"], strict_slashes=False
+        )
+def places(city_id):
+    city = storage.get(City, city_id)
+    
+    if not city:
+        abort(404)
+    return jsonify([place.to_dict() for place in city.places])
+
+
+@app_views.route(
+        "/cities/<city_id>/places", methods=["POST"], strict_slashes=False
         )
 def get_and_post_places(city_id):
     """ This function retuns and sends places from and into database """
     city = storage.get(City, city_id)
     args = request.get_json()
-    if request.method == "POST":
+
+    if not city:
+        abort(404)
+
+    elif request.method == "POST":
         # checking if the city_id is valid
         if not city:
             abort(404)
@@ -48,13 +61,6 @@ def get_and_post_places(city_id):
         storage.save()
 
         return jsonify(created_place.to_dict()), 201
-
-    else:
-        if not city:
-            abort(404)
-
-        _dict = [place.to_dict() for place in city.places]
-        return jsonify(_dict)
 
 
 @app_views.route(
