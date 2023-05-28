@@ -14,15 +14,26 @@ from flask import jsonify, abort, request
 
 
 @app_views.route(
-        "/places/<place_id>/reviews",
-        methods=["GET", "POST"],
-        strict_slashes=False
+        "/places/<place_id>/reviews", methods=["GET"], strict_slashes=False
         )
-def get_and_post_reviews(place_id):
+def reviews(place_id):
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(404)
+    return jsonify([review.to_dict() for review in place.reviews])
+
+
+@app_views.route(
+        "/places/<place_id>/reviews", methods=["POST"], strict_slashes=False
+        )
+def create_review(place_id):
     """ This function retuns and sends reviews from and into database """
     place = storage.get(Place, place_id)
     args = request.get_json()
-    if request.method == "POST":
+    if not place:
+        abort(404)
+
+    elif request.method == "POST":
         # checking if the place_id is valid
         if not place:
             abort(404)
@@ -48,13 +59,6 @@ def get_and_post_reviews(place_id):
         storage.save()
 
         return jsonify(created_review.to_dict()), 201
-
-    else:
-        if not place:
-            abort(404)
-
-        _dict = [review.to_dict() for review in place.reviews]
-        return jsonify(_dict)
 
 
 @app_views.route(
