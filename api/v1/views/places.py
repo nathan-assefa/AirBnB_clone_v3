@@ -18,7 +18,7 @@ from flask import jsonify, abort, request
         )
 def places(city_id):
     city = storage.get(City, city_id)
-    
+
     if not city:
         abort(404)
     return jsonify([place.to_dict() for place in city.places])
@@ -28,7 +28,7 @@ def places(city_id):
         "/cities/<city_id>/places", methods=["POST"], strict_slashes=False
         )
 def get_and_post_places(city_id):
-    """ This function retuns and sends places from and into database """
+    """This function retuns and sends places from and into database"""
     city = storage.get(City, city_id)
     args = request.get_json()
 
@@ -45,17 +45,17 @@ def get_and_post_places(city_id):
             # we can use make_responce here but for simpliplace sake we omit it
             return jsonify({"error": "Not a JSON"}), 400
 
-        elif 'user_id' not in args:
+        elif "user_id" not in args:
             return jsonify({"error": "Missing user_id"}), 400
 
-        elif not storage.get(User, args['user_id']):
+        elif not storage.get(User, args["user_id"]):
             abort(404)
 
-        elif 'name' not in args:
+        elif "name" not in args:
             return jsonify({"error": "Missing name"}), 400
 
         # adding city_id to keep integrity between citys and citieis table
-        args['city_id'] = city_id
+        args["city_id"] = city_id
         created_place = Place(**args)
         storage.new(created_place)
         storage.save()
@@ -64,15 +64,15 @@ def get_and_post_places(city_id):
 
 
 @app_views.route(
-        "/places/<place_id>",
-        methods=["GET", "DELETE", "PUT"],
-        strict_slashes=False
-        )
+    "/places/<place_id>",
+    methods=["GET", "DELETE", "PUT"],
+    strict_slashes=False
+)
 def place(place_id):
     """This function returns and deletes a place"""
     place = storage.get(Place, place_id)
-    if place and request.method == 'GET':
-            return jsonify(place.to_dict())
+    if place and request.method == "GET":
+        return jsonify(place.to_dict())
 
     elif place and request.method == "DELETE":
         place.delete()
@@ -83,11 +83,11 @@ def place(place_id):
         new_place = request.get_json()
 
         if not new_place:
-            return jsonify({'error': 'Not a JSON'}), 400
+            return jsonify({"error": "Not a JSON"}), 400
 
         for key, val in new_place.items():
             if key not in [
-                    'id', 'created_at', 'updated_at', 'user_id', 'city_id'
+                    "id", "created_at", "updated_at", "user_id", "city_id"
                     ]:
                 setattr(place, key, val)
         storage.save()
