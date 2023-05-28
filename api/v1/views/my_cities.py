@@ -71,10 +71,11 @@ def create_city(state_id):
         return jsonify("Missing name"), 400
 
     # create the city instance
+    new_city['state_id'] = state_id
     new_city = City(**new_data)
 
     # Add state_id in the city forign key for relation sake
-    setattr(new_city, "state_id", state_id)
+    # setattr(new_city, "state_id", state_id)
 
     # Sending the new city in the cities table in the database
     storage.new(new_city)
