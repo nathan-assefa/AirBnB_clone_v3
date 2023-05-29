@@ -102,6 +102,9 @@ def place(place_id):
 def places_search():
     request_data = request.get_json()
 
+    if not request_data:
+        return jsonify('Not a JSON'), 400
+
     # First, fetch all the state IDs if they exist
     state_ids = request_data.get('states', [])
 
