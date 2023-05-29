@@ -66,8 +66,7 @@ def get_and_post_places(city_id):
 
 
 @app_views.route(
-    "/places/<place_id>",
-    methods=["GET", "DELETE", "PUT"],
+    "/places/<place_id>", methods=["GET", "DELETE", "PUT"],
     strict_slashes=False
 )
 def place(place_id):
@@ -98,23 +97,27 @@ def place(place_id):
     else:
         abort(404)
 
-@app_views.route('/places_search', methods=['POST'], strict_slashes=False)
+
+@app_views.route("/places_search", methods=["POST"], strict_slashes=False)
 def places_search():
     # Check if the request body is valid JSON
     if not request.is_json:
-        abort(400, description='Not a JSON')
+        abort(400, description="Not a JSON")
 
     # Get the JSON request body
     search_data = request.get_json()
 
-    # Retrieve all Place objects if the JSON body is empty or all lists are empty
-    if not search_data or all(len(search_data[key]) == 0 for key in search_data.keys()):
+    # Retrieve all Place objects if the JSON body is
+    # empty or all lists are empty
+    if not search_data or all(
+            len(search_data[key]) == 0 for key in search_data.keys()
+            ):
         places = storage.all(Place).values()
         return jsonify([place.to_dict() for place in places])
 
-    states_ids = search_data.get('states', [])
-    cities_ids = search_data.get('cities', [])
-    amenities_ids = search_data.get('amenities', [])
+    states_ids = search_data.get("states", [])
+    cities_ids = search_data.get("cities", [])
+    amenities_ids = search_data.get("amenities", [])
 
     places = set()
 
@@ -132,7 +135,10 @@ def places_search():
                 places.update(city.places)
 
     if amenities_ids:
-        amenities = [storage.get(Amenity, amenity_id) for amenity_id in amenities_ids]
+        amenities = [
+                storage.get(Amenity, amenity_id)
+                for amenity_id in amenities_ids
+                ]
         amenities = [amenity for amenity in amenities if amenity is not None]
 
         places_with_amenities = set()
