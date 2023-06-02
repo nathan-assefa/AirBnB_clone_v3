@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/3-footer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/3-header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/4-common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/6-filters.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/8-places.css') }}">
+    <title>AirBnB_clone</title>
+</head>
+<body>
+    <header>
+        <div>
+            <div class="logo"></div>
+        </div>
+    </header>
+    <div class="container">
+        <section class="filters">
+            <div class="locations">
+                <h3>State</h3>
+                <ul class="popover">
+                    {% for state in states|sort(attribute='name') %}
+                        <li><h2>{{ state.name }}</h2>
+                          <ul>
+                                {% for city in state.cities|sort(attribute='name') %}
+                                        <li><p>{{ city.name }}</p></li>
+                                {% endfor %}
+                          </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="amenities">
+                <h3>Amenities</h3>
+                <ul class="popover">
+                    {% for amenity in amenities|sort(attribute='name') %}
+                        <lI>{{ amenity.name }}</LI>
+                    {% endfor %}
+                </ul>
+            </div>
+            <button>Search</button>
+        </section>
+        <section class="places">
+            <h1>Places</h1>
+            <article>
+                <h2>My home</h2>
+                <div class="price_by_night"><p>$80</p></div>
+                <div class="information">
+                    <div class="max_guest"><p>2 Guests</p></div>
+                    <div class="number_rooms"><p>1 bedroom</p></div>
+                    <div class="number_bathrooms"><p>1 Bathroom</p></div>
+                </div>
+                <div class="user"><b>Owner:</b> Marinette Dupain-Cheng</div>
+                <div class="description">
+                    <p>
+                        This is a lovely 1 bedroom and 1 Bathroom
+                        apartment that can accommodate 2 people.
+                        It locates at the center of Shanghai and
+                        next to subway line 1, stop to People Square,
+                        2 stops to Bund, 3 stops to Jingan Temple.
+                    </p>
+                </div>
+            </article>
+            <article>
+                    <h2>Tiny home</h2>
+                    <div class="price_by_night"><p>$65</p></div>
+                    <div class="information">
+                        <div class="max_guest"><p>4 Guests</p></div>
+                        <div class="number_rooms"><p>2 bedrooms</p></div>
+                        <div class="number_bathrooms"><p>1 Bathroom</p></div>
+                    </div>
+                    <div class="user"><b>Owner:</b> Adrien Agreste</div>
+                    <div class="description">
+                        <p>
+                            Enjoy the simplicity of this quiet and central
+                            accommodation. Located on the second floor,
+                            in the historic center 500 meters from the
+                            Plaza de Armas, walking they arrive in 6
+                            minutes, it has two double beds, two
+                            bedrooms, a bathroom, a completely independent
+                            kitchen-dining room environment.
+                        </p>
+                    </div>
+                </article>
+                <article>
+                    <h2>A suite</h2>
+                    <div class="price_by_night"><p>$180</p></div>
+                    <div class="information">
+                        <div class="max_guest"><p>6 Guests</p></div>
+                        <div class="number_rooms"><p>3 bedrooms</p></div>
+                        <div class="number_bathrooms"><p>3 Bathrooms</p></div>
+                    </div>
+                    <div class="user"><b>Owner:</b> Marinette Dupain-Cheng</div>
+                    <div class="description">
+                        <p>
+                            Castel Saba is located in Spain, on the
+                            Costa Blanca, slightly south of Alicante.
+                            The place is very quiet, close to the sea
+                            and the countryside. The property is surrounded
+                            by a pine forest: the house dominates cultures
+                            of fruit trees, especially oranges and
+                            lemons and also the natural reserve of the
+                            region, the Rio Seco.
+                        </p>
+                    </div>
+                </article>
+            </section>
+        </div>
+        <footer>
+            <p>Best School</p>
+        </footer>
+    </body>
+</html>
