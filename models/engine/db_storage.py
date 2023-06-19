@@ -77,9 +77,11 @@ class DBStorage:
 
     def get(self, cls, id):
         """Returns the object based on the class and its ID, or None"""
-        if type(cls) is not str:
-            cls = cls.__name__
-        return self.all().get(cls + "." + id)
+        if cls and id and type(id) is str:
+            if type(cls) is not str:
+                cls = cls.__name__
+            return self.all().get(cls + "." + id)
+        return None
 
     def count(self, cls=None):
         """Count number of objects in storage"""
