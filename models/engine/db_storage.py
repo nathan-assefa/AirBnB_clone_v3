@@ -87,7 +87,7 @@ class DBStorage:
         if cls:
             if type(cls) is not str:
                 cls = cls.__name__
-            return len([obj for obj in all_objects if type(
+            sreturn len([obj for obj in all_objects if type(
                         obj).__name__ == cls])
         else:
             return len(self.all())
