@@ -158,6 +158,8 @@ def places_search():
             if city:
                 places.update(city.places)
     if amenities_ids:
+        if not places:
+            places = storage.all(Place).values()
         amenities = [
                 storage.get(Amenity, amenity_id)
                 for amenity_id in amenities_ids
