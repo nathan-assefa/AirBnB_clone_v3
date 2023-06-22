@@ -133,7 +133,7 @@ def places_search():
 
     # Retrieve all Place objects if the JSON body is
     # empty or all lists are empty
-    if not search_data or all(
+    iif not search_data or all(
             len(search_data[key]) == 0 for key in search_data.keys()
             ):
         places = storage.all(Place).values()
