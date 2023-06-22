@@ -113,7 +113,7 @@ def places_search():
             len(search_data[key]) == 0 for key in search_data.keys()
             ):
         places = storage.all(Place).values()
-        # return jsonify([place.to_dict() for place in places])
+        return jsonify([place.to_dict() for place in places])
 
     else:
         states_ids = search_data.get("states", [])
